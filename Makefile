@@ -21,6 +21,7 @@ SRCS  = $(wildcard $(SRC_PATH)/*.cpp)
 OBJS  = $(SRCS:$(SRC_PATH)/%.cpp=$(OBJ_PATH)/%.o)
 
 CFLAGS  = -mtune=native -fopenmp -ffast-math
+CLFAGS += -O3 -s
 CFLAGS += -I$(SRC_PATH)
 CFLAGS += -I$(FLI_PATH)
 CFLAGS += -I$(RES_PATH)
