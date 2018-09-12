@@ -14,10 +14,10 @@ https://www.scratchapixel.com/code.php?id=51&origin=/lessons/digital-imaging/sim
 ## How to build ?
 * Reserved conditions :
     - fltk-1.3.4-2-ts was built and installed on your system.
+    - make sure fl_imgtk was built.
     - put fl_imgtk in same level of directory of this project.
 ```
 (project root)/fl_imgtk
 (project root)/fltk_bokeh_effect
 ```
-    - make sure fl_imgtk was built.
 * just type make.
