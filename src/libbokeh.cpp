@@ -64,13 +64,14 @@ class Image
             float r, g, b;
         };
         
-        Image() : w(0), h(0), pixels(nullptr)
+        Image() 
+        : w(0), h(0), pixels(nullptr)
         {
             /* empty image */ 
         }
 
-        Image(const unsigned int &_w, const unsigned int &_h, const RGBf &c = RGBf(0) ) :
-            w(_w), h(_h), pixels(nullptr)
+        Image(const unsigned int &_w, const unsigned int &_h, const RGBf &c = RGBf(0) ) 
+        : w(_w), h(_h), pixels(nullptr)
         {
             pixels = new RGBf[w * h];
             
@@ -84,7 +85,8 @@ class Image
             }
         }
         
-        Image(const Image &img) : w(img.w), h(img.h), pixels(nullptr)
+        Image(const Image &img) 
+        : w(img.w), h(img.h), pixels(nullptr)
         {
             pixels = new RGBf[w * h];
             
@@ -95,7 +97,8 @@ class Image
         }
         
         // move constructor
-        Image(Image &&img) : w(0), h(0), pixels(nullptr)
+        Image(Image &&img) 
+        : w(0), h(0), pixels(nullptr)
         {
             w       = img.w;
             h       = img.h;
@@ -238,6 +241,7 @@ static const Image::RGBf kWhite = Image::RGBf(1);
 static const Image::RGBf kRed   = Image::RGBf(1,0,0);
 static const Image::RGBf kGreen = Image::RGBf(0,1,0);
 static const Image::RGBf kBlue  = Image::RGBf(0,0,1);
+static float intensity = 0.8f;
 
 Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigned d )
 {   
@@ -286,9 +290,14 @@ Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigne
         img.pixels[cnt].g = pix[1] / 255.f;
         img.pixels[cnt].b = pix[2] / 255.f;
         
-        if (img.pixels[cnt].r > 0.7f) img.pixels[cnt].r *= 3;
-        if (img.pixels[cnt].g > 0.7f) img.pixels[cnt].g *= 3;
-        if (img.pixels[cnt].b > 0.7f) img.pixels[cnt].b *= 3;
+        if ( img.pixels[cnt].r > intensity ) 
+            img.pixels[cnt].r *= 3;
+
+        if ( img.pixels[cnt].g > intensity ) 
+            img.pixels[cnt].g *= 3;
+
+        if ( img.pixels[cnt].b > intensity ) 
+            img.pixels[cnt].b *= 3;
     }
 
     return img;
