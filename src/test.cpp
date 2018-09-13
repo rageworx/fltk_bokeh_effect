@@ -37,6 +37,10 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#define APP_VERSION_STR     "0.1.3.21"
+
+////////////////////////////////////////////////////////////////////////////////
+
 bool save2png( Fl_RGB_Image* imgcached, const char* fpath );
 
 bool convImage2RGB( Fl_RGB_Image* src, Fl_RGB_Image* &dst )
@@ -543,9 +547,9 @@ bool parseArgs( int argc, char** argv )
 
 void printAbout()
 {
-    printf( "%s : libbokeh testing program with FLTK-1.3.4-1-ts, ver %s\n", 
+    printf( "%s : libbokeh testing program with FLTK-1.3.4-2-ts, ver %s\n", 
             file_me.c_str(),
-            "0.1.0.0" );
+            APP_VERSION_STR );
     printf( "(C)Copyrighted ~2018 Raphael Kim\n\n" );
     fflush( stdout );   
 }
@@ -620,16 +624,41 @@ int main( int argc, char** argv )
         printUsage();
         return -1;
     }
-        	
+
+    printAbout();
+    
     Fl_RGB_Image* imgSrc   = loadImg( file_src );
 	Fl_RGB_Image* imgBokeh = loadImg( file_bokeh );    
     
     if ( ( imgSrc != NULL ) && ( imgBokeh != NULL ) ) 
     {
+        unsigned origin_w = imgSrc->w();
+        unsigned origin_h = imgSrc->h();
+
         Fl_RGB_Image* imgRGB = NULL;
 		Fl_RGB_Image* imgMask = NULL;
                 
 		printf( "- Converting common images ... " );
+
+        unsigned mask_w = imgBokeh->w();
+        unsigned mask_h = imgBokeh->h();
+        unsigned expand_sz_w = origin_w + ( mask_w * 2 );
+        unsigned expand_sz_h = origin_h + ( mask_h * 2 );
+
+        // Expand soruce image -
+        Fl_RGB_Image* imgTmpSrc = imgSrc;
+        imgSrc = fl_imgtk::rescale( imgTmpSrc,
+                                    expand_sz_w,
+                                    expand_sz_h,
+                                    fl_imgtk::BILINEAR );
+        fl_imgtk::brightness( imgSrc, -50 );
+        fl_imgtk::drawonimage( imgSrc, 
+                               imgTmpSrc,
+                               ( expand_sz_w - origin_w ) / 2,
+                               ( expand_sz_h - origin_h ) / 2 );
+
+        fl_imgtk::discard_user_rgb_image( imgTmpSrc );
+
         convImage2RGB( imgSrc, imgRGB );
         
         if ( ( imgBokeh->w() <= imgSrc->w() ) 
@@ -647,6 +676,8 @@ int main( int argc, char** argv )
         {
             // Error !
             // Bokeh must be smaller than source image.
+            printf( "Error.\n" );
+            printf( "-> Bokeh image is larger than source image.\n" );
         }
         
 		convImage2Mono( imgBokeh, imgMask );
@@ -680,8 +711,24 @@ int main( int argc, char** argv )
 
 			if ( retb == true )
 			{
-				
-				Fl_RGB_Image* imgWrite = new Fl_RGB_Image( outbuff, ref_w, ref_h, 3 );
+                Fl_RGB_Image* imgWrite = NULL;
+				Fl_RGB_Image* imgWriteSrc = new Fl_RGB_Image( outbuff, 
+                                                              ref_w, 
+                                                              ref_h, 
+                                                              3 );
+                if ( imgWriteSrc != NULL )
+                {
+                    // Crop image to origin size.
+                    imgWrite = fl_imgtk::crop( imgWriteSrc,
+                                               mask_w + ( mask_w / 2 ),
+                                               mask_h / 2,
+                                               origin_w,
+                                               origin_h );
+
+
+                    fl_imgtk::discard_user_rgb_image( imgWriteSrc );
+                }
+
 				if ( imgWrite != NULL )
 				{
 					printf( "- Writing : %s ... ", file_dst.c_str() );
@@ -694,12 +741,6 @@ int main( int argc, char** argv )
 					
 					delete imgWrite;
 				}
-				else
-				{
-					printf( "????" );
-				}
-				
-				delete[] outbuff;				
 			}
 			
             delete imgRGB;
