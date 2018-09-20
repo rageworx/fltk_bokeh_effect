@@ -203,14 +203,15 @@ class Image
             
             unsigned w = img.w;
             unsigned h = img.h;
+            unsigned x;
+            unsigned y;
             
-            #pragma omp parallel for
-            for ( unsigned y = 0; y<h; y++ )
+            #pragma omp parallel for private(x)
+            for ( y = 0; y<h; y++ )
             {
                 unsigned ymod = ( y + shfty ) % h;
               
-                #pragma omp parallel for
-                for ( unsigned x = 0; x < w; x++ ) 
+                for ( x = 0; x < w; x++ ) 
                 {
                     unsigned xmod = ( x + shftx ) % w;
                     tmp[ ymod * w + xmod ] = img[ y * w + x ];
@@ -250,7 +251,7 @@ static const Image::RGBf kWhite = Image::RGBf(1);
 static const Image::RGBf kRed   = Image::RGBf(1,0,0);
 static const Image::RGBf kGreen = Image::RGBf(0,1,0);
 static const Image::RGBf kBlue  = Image::RGBf(0,0,1);
-static float intensity = 0.8f;
+static float intensity = 0.9f;
 
 Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigned d )
 {   

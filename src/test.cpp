@@ -697,17 +697,23 @@ int main( int argc, char** argv )
 			
             uchar*       outbuff = NULL;
             unsigned     outsz   = 0;
-            
+
 			printf( "- Processing bokeh effect ... " );
 			fflush( stdout );
-			
+	    
+            unsigned perf0   = tick::getTickCount();
+ 		
 			bool retb = ProcessBokeh( refbuff,
 			                          ref_w, ref_h, ref_d,
 									  refmbuf,
 									  outbuff );
 									  
-			printf( "done ( %d )\n", (int)retb );
+	        unsigned perf1    = tick::getTickCount();
+
+            printf( "done ( %d ) in %u ms.\n", 
+                    (int)retb, perf1 - perf0 );
 			fflush( stdout );
+
 
 			if ( retb == true )
 			{
