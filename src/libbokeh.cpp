@@ -11,6 +11,10 @@
 
 #include <omp.h>
 
+#ifndef nullptr
+    #define nullptr     NULL
+#endif
+
 using namespace std;
 
 class Image
@@ -97,6 +101,7 @@ class Image
         }
         
         // move constructor
+#ifndef GCC5
         Image(Image &&img) 
         : w(0), h(0), pixels(nullptr)
         {
@@ -107,9 +112,11 @@ class Image
             img.w   = 0;
             img.h   = 0;
         }
-        
+#endif /// of GCC5
+
         // move assignment operator
-        Image& operator = (Image &&img)
+#ifndef GCC5
+        Image& operator = (Image &img)
         {
             if (this != &img) 
             {
@@ -126,7 +133,8 @@ class Image
             
             return *this;
         }
-        
+#endif /// of GCC5
+
         RGBf& operator () (const unsigned &x, const unsigned int &y) const
         {
             //assert(x < w && y < h);
@@ -200,7 +208,8 @@ class Image
             for ( unsigned y = 0; y<h; y++ )
             {
                 unsigned ymod = ( y + shfty ) % h;
-                
+              
+                #pragma omp parallel for
                 for ( unsigned x = 0; x < w; x++ ) 
                 {
                     unsigned xmod = ( x + shftx ) % w;
