@@ -37,7 +37,7 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define APP_VERSION_STR     "0.1.3.21"
+#define APP_VERSION_STR     "0.1.5.28"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -651,7 +651,7 @@ int main( int argc, char** argv )
                                     expand_sz_w,
                                     expand_sz_h,
                                     fl_imgtk::BILINEAR );
-        fl_imgtk::brightness( imgSrc, -50 );
+        fl_imgtk::brightness_ex( imgSrc, -50 );
         fl_imgtk::drawonimage( imgSrc, 
                                imgTmpSrc,
                                ( expand_sz_w - origin_w ) / 2,
@@ -724,10 +724,12 @@ int main( int argc, char** argv )
                                                               3 );
                 if ( imgWriteSrc != NULL )
                 {
+                    unsigned crop_l = mask_w + ( mask_w * 0.55f );
+                    unsigned crop_t = mask_h * 0.55f;
                     // Crop image to origin size.
                     imgWrite = fl_imgtk::crop( imgWriteSrc,
-                                               mask_w + ( mask_w / 2 ),
-                                               mask_h / 2,
+                                               crop_l,
+                                               crop_t,
                                                origin_w,
                                                origin_h );
 

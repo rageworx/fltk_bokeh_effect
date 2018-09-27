@@ -246,12 +246,11 @@ class Image
         
 };
 
-static const Image::RGBf kBlack = Image::RGBf(0);
-static const Image::RGBf kWhite = Image::RGBf(1);
-static const Image::RGBf kRed   = Image::RGBf(1,0,0);
-static const Image::RGBf kGreen = Image::RGBf(0,1,0);
-static const Image::RGBf kBlue  = Image::RGBf(0,0,1);
+//////////////////////////////////////////////////
+
 static float intensity = 0.9f;
+
+//////////////////////////////////////////////////
 
 Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigned d )
 {   
@@ -262,7 +261,7 @@ Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigne
     
     img.w = w; 
     img.h = h;
-    img.pixels = new Image::RGBf[w * h]; // this is throw an exception if bad_alloc
+    img.pixels = new Image::RGBf[w * h];
     
     // read each pixel one by one and convert bytes to floats
     #pragma omp parallel for
@@ -323,7 +322,8 @@ bool ProcessBokeh( const unsigned char* srcptr,
     Image outf( srcw, srch );
 
     float total = 0;
-    
+    Image::RGBf kBlack = Image::RGBf(0);
+   
     for ( unsigned y=0; y<srch; y++ ) 
     {
         for ( unsigned x=0; x<srcw; x++ ) 
