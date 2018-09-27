@@ -262,6 +262,15 @@ Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigne
     img.w = w; 
     img.h = h;
     img.pixels = new Image::RGBf[w * h];
+
+    if ( img.pixels == nullptr )
+    {
+        // It must be failed to allocate memory,
+        // Caller must be check image width and height.
+        img.w = 0;
+        img.h = 0;
+        return img; 
+    }
     
     // read each pixel one by one and convert bytes to floats
     #pragma omp parallel for
@@ -299,14 +308,15 @@ Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigne
         img.pixels[cnt].g = pix[1] / 255.f;
         img.pixels[cnt].b = pix[2] / 255.f;
         
+        // Multiply by 3 when pixel value overs intesity.
         if ( img.pixels[cnt].r > intensity ) 
-            img.pixels[cnt].r *= 3;
+            img.pixels[cnt].r *= 3.f;
 
         if ( img.pixels[cnt].g > intensity ) 
-            img.pixels[cnt].g *= 3;
+            img.pixels[cnt].g *= 3.f;
 
         if ( img.pixels[cnt].b > intensity ) 
-            img.pixels[cnt].b *= 3;
+            img.pixels[cnt].b *= 3.f;
     }
 
     return img;
@@ -324,12 +334,17 @@ bool ProcessBokeh( const unsigned char* srcptr,
     float total = 0;
     Image::RGBf kBlack = Image::RGBf(0);
    
-    for ( unsigned y=0; y<srch; y++ ) 
+    unsigned x = 0;
+    unsigned y = 0;
+
+    for ( y=0; y<srch; y++ ) 
     {
-        for ( unsigned x=0; x<srcw; x++ ) 
+        #pragma omp parallel for reduction(+:total) shared(outf)
+        for ( x=0; x<srcw; x++ ) 
         {
             if ( maskf(x, y) != kBlack ) 
             {
+                #pragma omp task
                 outf  += maskf(x, y) * Image::circshift( srcf, x, y );
                 total += maskf(x, y);
             }
