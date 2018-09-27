@@ -9,7 +9,9 @@ https://www.scratchapixel.com/code.php?id=51&origin=/lessons/digital-imaging/sim
 * fl_imgtk
 
 ## Required platform
+* Above OpenMP 3.5
 * Any, with G++ ( above C++11 )
+* Should be avoid C++11 error by using Makefile.linuxgcc5
 
 ## How to build ?
 * Reserved conditions :
