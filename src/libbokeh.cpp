@@ -309,14 +309,36 @@ Image loadFromMemory( const unsigned char* buff, unsigned w, unsigned h, unsigne
         img.pixels[cnt].b = pix[2] / 255.f;
         
         // Multiply by 3 when pixel value overs intesity.
+        // advanced to color distornation.
+        float mp_r = img.pixels[cnt].r;
+        float mp_g = img.pixels[cnt].g;
+        float mp_b = img.pixels[cnt].b;
+        unsigned mp_s = 0;
+
         if ( img.pixels[cnt].r > intensity ) 
-            img.pixels[cnt].r *= 3.f;
+        {
+            mp_r *= 3.f;
+            mp_s ++;
+        }
 
-        if ( img.pixels[cnt].g > intensity ) 
-            img.pixels[cnt].g *= 3.f;
+        if ( img.pixels[cnt].g > intensity )
+        {
+            mp_g *= 3.f;
+            mp_s ++;
+        }
 
-        if ( img.pixels[cnt].b > intensity ) 
-            img.pixels[cnt].b *= 3.f;
+        if ( img.pixels[cnt].b > intensity )
+        {
+            mp_b *= 3.f;
+            mp_s ++;
+        }
+
+        if ( mp_s > 2 )
+        {
+            img.pixels[cnt].r = mp_r;
+            img.pixels[cnt].g = mp_g;
+            img.pixels[cnt].b = mp_b;
+        }
     }
 
     return img;
