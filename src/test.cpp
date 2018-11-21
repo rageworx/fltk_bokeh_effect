@@ -651,7 +651,7 @@ int main( int argc, char** argv )
                                     expand_sz_w,
                                     expand_sz_h,
                                     fl_imgtk::BILINEAR );
-        fl_imgtk::brightness_ex( imgSrc, -50 );
+        //fl_imgtk::brightness_ex( imgSrc, -50 );
         fl_imgtk::drawonimage( imgSrc, 
                                imgTmpSrc,
                                ( expand_sz_w - origin_w ) / 2,
