@@ -404,6 +404,10 @@ bool ProcessFastBokeh( const unsigned char* srcptr,
                        unsigned bkw, unsigned bkh,
                        unsigned char* &outptr )
 {
+    // check mask size.
+    if ( ( srcw < bkw ) || ( srch < bkh ) ) 
+        return false;
+
     Image srcf  = loadFromMemory( srcptr, srcw, srch, srcd );   
     Image maskf = loadFromMemory( bokeh, bkw, bkh, 1 );
     Image outf( srcw, srch );
@@ -416,22 +420,20 @@ bool ProcessFastBokeh( const unsigned char* srcptr,
     unsigned msk_x = bkw;
     unsigned msk_y = srch - bkh;
 
-    for ( y=0; y<srch; y++ ) 
+    // Don't need to all size of image, just repeats for mask size.
+    for( y=msk_y; y<srch; y++ )
     {
         #pragma omp parallel for reduction(+:total) shared(outf)
-        for ( x=0; x<srcw; x++ ) 
+        for( x=0; x<msk_x; x++ )
         {
-            if ( ( x < msk_x ) && ( y > msk_y ) )
-            {
-                unsigned mx = x;
-                unsigned my = y - msk_y;
+            unsigned mx = x;
+            unsigned my = y - msk_y;
 
-                if ( maskf(mx, my) != kBlack ) 
-                {
-                    #pragma omp task
-                    outf  += maskf(mx, my) * Image::circshift( srcf, x, y );
-                    total += maskf(mx, my);
-                }
+            if ( maskf(mx, my) != kBlack ) 
+            {
+                #pragma omp task
+                outf  += maskf(mx, my) * Image::circshift( srcf, x, y );
+                total += maskf(mx, my);
             }
         }
     }
