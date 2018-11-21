@@ -612,6 +612,10 @@ Fl_RGB_Image* loadImg( string fname )
 		
 		return imgTest;
     }
+    else
+    {
+        printf( "Failed.\n" );
+    }
 	
 	return NULL;
 }
