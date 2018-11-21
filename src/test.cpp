@@ -37,7 +37,7 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define APP_VERSION_STR     "0.1.7.31"
+#define APP_VERSION_STR     "0.1.8.35"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -641,7 +641,7 @@ int main( int argc, char** argv )
 		printf( "- Converting common images ... " );
 
         unsigned mask_w = imgBokeh->w();
-        unsigned mask_h = imgBokeh->h();
+        unsigned mask_h = imgBokeh->h();        
         unsigned expand_sz_w = origin_w + ( mask_w * 2 );
         unsigned expand_sz_h = origin_h + ( mask_h * 2 );
 
@@ -664,6 +664,7 @@ int main( int argc, char** argv )
         if ( ( imgBokeh->w() <= imgSrc->w() ) 
               && ( imgBokeh->h() <= imgSrc->h() ) )
         {
+            /*
             Fl_RGB_Image* imgTmp = imgBokeh;
             imgBokeh= fl_imgtk::makeanempty( imgSrc->w(), imgSrc->h(), 3, 0x0 );
             int put_x = 0;
@@ -671,6 +672,7 @@ int main( int argc, char** argv )
             fl_imgtk::drawonimage( imgBokeh, imgTmp, put_x, put_y );
             
             fl_imgtk::discard_user_rgb_image( imgTmp );
+            */
         }
         else
         {
@@ -703,10 +705,17 @@ int main( int argc, char** argv )
 	    
             unsigned perf0   = tick::getTickCount();
  		
+            /*
 			bool retb = ProcessBokeh( refbuff,
 			                          ref_w, ref_h, ref_d,
 									  refmbuf,
 									  outbuff );
+            */
+            bool retb = ProcessFastBokeh( refbuff,
+                                          ref_w, ref_h, ref_d,
+                                          refmbuf,
+                                          mask_w, mask_h,
+                                          outbuff );
 									  
 	        unsigned perf1    = tick::getTickCount();
 

@@ -397,3 +397,66 @@ bool ProcessBokeh( const unsigned char* srcptr,
     
     return false;
 }
+
+bool ProcessFastBokeh( const unsigned char* srcptr, 
+                       unsigned srcw, unsigned srch, unsigned srcd,
+                       const unsigned char* bokeh,  
+                       unsigned bkw, unsigned bkh,
+                       unsigned char* &outptr )
+{
+    Image srcf  = loadFromMemory( srcptr, srcw, srch, srcd );   
+    Image maskf = loadFromMemory( bokeh, bkw, bkh, 1 );
+    Image outf( srcw, srch );
+
+    float total = 0;
+    Image::RGBf kBlack = Image::RGBf(0);
+   
+    unsigned x = 0;
+    unsigned y = 0;
+    unsigned msk_x = bkw;
+    unsigned msk_y = srch - bkh;
+
+    for ( y=0; y<srch; y++ ) 
+    {
+        #pragma omp parallel for reduction(+:total) shared(outf)
+        for ( x=0; x<srcw; x++ ) 
+        {
+            if ( ( x < msk_x ) && ( y > msk_y ) )
+            {
+                unsigned mx = x;
+                unsigned my = y - msk_y;
+
+                if ( maskf(mx, my) != kBlack ) 
+                {
+                    #pragma omp task
+                    outf  += maskf(mx, my) * Image::circshift( srcf, x, y );
+                    total += maskf(mx, my);
+                }
+            }
+        }
+    }
+    
+    outf /= total;
+        
+    unsigned outsz = srcw * srch;
+    outptr = new unsigned char[ outsz * 3 ];
+    
+    if ( outptr != NULL )
+    {
+        #pragma omp parallel for
+        for( unsigned cnt=0; cnt<outsz; cnt++ )
+        {
+            unsigned char uc_rgb[3] = {0,0,0};
+            
+            uc_rgb[0] = min( 1.f, outf.pixels[cnt].r ) * 255.f;
+            uc_rgb[1] = min( 1.f, outf.pixels[cnt].g ) * 255.f;
+            uc_rgb[2] = min( 1.f, outf.pixels[cnt].b ) * 255.f;
+
+            memcpy( &outptr[ cnt * 3 ], uc_rgb, 3 );
+        }
+        
+        return true;
+    }
+    
+    return false;
+}

@@ -13,6 +13,12 @@ https://www.scratchapixel.com/code.php?id=51&origin=/lessons/digital-imaging/sim
 * Any, with G++ ( above C++11 )
 * Should be avoid C++11 error by using Makefile.linuxgcc5
 
+## Lastest update
+ * Version 0.1.8.35
+     1. Developing ProcessFastBokeh().
+	 1. ProcessFastBokeh() using less memory for mask.
+	 1. Little bit more faster than legacy code.
+
 ## How to build ?
 * Reserved conditions :
     - fltk-1.3.4-2-ts was built and installed on your system.
