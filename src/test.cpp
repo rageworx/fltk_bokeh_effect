@@ -435,6 +435,7 @@ static string   file_src;
 static string   file_bokeh;
 static string   file_dst;
 static string   file_cov;
+static bool     opt_legacy = false;
 
 bool parseArgs( int argc, char** argv )
 {
@@ -464,6 +465,11 @@ bool parseArgs( int argc, char** argv )
         }
         else
         {
+            if ( ( strtmp == "--legacy" ) || ( strtmp == "-L" ) )
+            {
+                opt_legacy = true;
+            }
+            else
             if ( file_src.size() == 0 )
             {
                 file_src = strtmp;
@@ -557,8 +563,11 @@ void printAbout()
 void printUsage()
 {
     printf( "  usage:\n" );
-    printf( "      %s [source image file] [bokeh file] (output image file)\n", 
+    printf( "      %s (option) [source image file] [bokeh file] (output image file)\n", 
             file_me.c_str() );
+    printf( "\n" );
+    printf( "  option:\n" );
+    printf( "      --legacy | -L    : doing legacy bokeh effoect.\n" );
     printf( "\n" );
 }
 
@@ -668,15 +677,16 @@ int main( int argc, char** argv )
         if ( ( imgBokeh->w() <= imgSrc->w() ) 
               && ( imgBokeh->h() <= imgSrc->h() ) )
         {
-            /*
-            Fl_RGB_Image* imgTmp = imgBokeh;
-            imgBokeh= fl_imgtk::makeanempty( imgSrc->w(), imgSrc->h(), 3, 0x0 );
-            int put_x = 0;
-            int put_y = imgSrc->h() - imgTmp->h();
-            fl_imgtk::drawonimage( imgBokeh, imgTmp, put_x, put_y );
-            
-            fl_imgtk::discard_user_rgb_image( imgTmp );
-            */
+            if ( opt_legacy == true )
+            {
+                Fl_RGB_Image* imgTmp = imgBokeh;
+                imgBokeh= fl_imgtk::makeanempty( imgSrc->w(), imgSrc->h(), 3, 0x0 );
+                int put_x = 0;
+                int put_y = imgSrc->h() - imgTmp->h();
+                fl_imgtk::drawonimage( imgBokeh, imgTmp, put_x, put_y );
+                
+                fl_imgtk::discard_user_rgb_image( imgTmp );
+            }
         }
         else
         {
@@ -704,23 +714,36 @@ int main( int argc, char** argv )
             uchar*       outbuff = NULL;
             unsigned     outsz   = 0;
 
-			printf( "- Processing bokeh effect ... " );
+            if ( opt_legacy == true )
+            {
+    			printf( "- Processing legacy bokeh effect ... " );
+            }
+            else
+            {
+                printf( "- Processing bokeh effect ... " );
+            }
 			fflush( stdout );
 	    
             unsigned perf0   = tick::getTickCount();
  		
-            /*
-			bool retb = ProcessBokeh( refbuff,
+            bool retb = false;
+
+            if ( opt_legacy == true )
+            {
+			    retb = ProcessBokeh( refbuff,
 			                          ref_w, ref_h, ref_d,
 									  refmbuf,
 									  outbuff );
-            */
-            bool retb = ProcessFastBokeh( refbuff,
+            }
+            else
+            {
+                retb = ProcessFastBokeh( refbuff,
                                           ref_w, ref_h, ref_d,
                                           refmbuf,
                                           mask_w, mask_h,
                                           outbuff );
-									  
+            }
+
 	        unsigned perf1    = tick::getTickCount();
 
             printf( "done ( %d ) in %u ms.\n", 
