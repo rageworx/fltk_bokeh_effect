@@ -20,7 +20,7 @@ TARGET   = bokehtest
 SRCS  = $(wildcard $(SRC_PATH)/*.cpp)
 OBJS  = $(SRCS:$(SRC_PATH)/%.cpp=$(OBJ_PATH)/%.o)
 
-CFLAGS  = -mtune=native -fopenmp -ffast-math
+CFLAGS  = -mtune=native -fopenmp -ffast-math -fomit-frame-pointer
 CLFAGS += -O3 -s
 CFLAGS += -I$(SRC_PATH)
 CFLAGS += -I$(FLI_PATH)
@@ -30,7 +30,7 @@ CFLAGS += -I$(RES_PATH)
 CFLAGS += $(FLTKCFG_CXX)
 
 LFLAGS  = -L$(FLI_PATH)
-LFLAGS += -static
+#LFLAGS += -static
 LFLAGS += -lfl_imgtk
 LFLAGS += $(FLTKCFG_LFG)
 
