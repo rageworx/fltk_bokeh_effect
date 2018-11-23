@@ -101,21 +101,19 @@ class Image
         }
         
         // move constructor
-#ifndef GCC5
-        Image(Image &&img) 
+        Image(Image* &img) 
         : w(0), h(0), pixels(nullptr)
         {
-            w       = img.w;
-            h       = img.h;
-            pixels  = img.pixels;
-            img.pixels = nullptr;
-            img.w   = 0;
-            img.h   = 0;
+            w       = img->w;
+            h       = img->h;
+            pixels  = img->pixels;
+
+            img->pixels = nullptr;
+            img->w      = 0;
+            img->h      = 0;
         }
-#endif /// of GCC5
 
         // move assignment operator
-#ifndef GCC5
         Image& operator = (Image &img)
         {
             if (this != &img) 
@@ -133,7 +131,6 @@ class Image
             
             return *this;
         }
-#endif /// of GCC5
 
         RGBf& operator () (const unsigned &x, const unsigned int &y) const
         {
