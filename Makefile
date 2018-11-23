@@ -29,10 +29,17 @@ CFLAGS += -I$(RES_PATH)
 #CFLAGS += -DDEBUG
 CFLAGS += $(FLTKCFG_CXX)
 
+LSTATICFLAG =
+ifeq (static,$(firstword $(MAKECMDGOALS)))
+	LSTATICFLAG = -static
+endif
+
 LFLAGS  = -L$(FLI_PATH)
-#LFLAGS += -static
+LFLAGS += $(LSTATICFLAG)
 LFLAGS += -lfl_imgtk
 LFLAGS += $(FLTKCFG_LFG)
+
+static: all
 
 all: prepare $(BIN_PATH)/$(TARGET)
 
