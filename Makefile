@@ -53,7 +53,7 @@ clean:
 
 $(OBJS): $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
 	@echo "Compiling $< ..."
-	@$(CXX) $(CFLAGS) $(LFLAGS) -c $< -o $@
+	@$(CXX) $(CFLAGS) -c $< -o $@
 
 $(BIN_PATH)/$(TARGET): $(OBJS)
 	@echo "Linking $@ ..."
