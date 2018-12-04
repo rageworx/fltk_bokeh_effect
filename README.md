@@ -13,7 +13,14 @@ https://www.scratchapixel.com/code.php?id=51&origin=/lessons/digital-imaging/sim
 * Any, with G++ ( above C++11 )
 * Should be avoid C++11 error by using Makefile.linuxgcc5
 
+## Optional build for MacOSX
+* use Makefile.llvm for builds source without OpenMP.
+
 ## Lastest update
+ * Platform update
+     1. Availed optional build for MacOSX with makefile.llvm.
+
+## Previous updates
  * Version 0.1.8.35
      1. Developing ProcessFastBokeh().
 	 1. ProcessFastBokeh() using less memory for mask.
