@@ -9,7 +9,9 @@
 #include <exception>
 #include <vector>
 
+#ifndef NOOPENMP
 #include <omp.h>
+#endif /// of NOOPENMP
 
 #ifndef nullptr
     #define nullptr     NULL

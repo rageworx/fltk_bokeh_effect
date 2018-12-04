@@ -4,7 +4,9 @@
 
 #include <unistd.h>
 
+#ifndef NOOPENMP
 #include <omp.h>
+#endif /// of NOOPENMP
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
