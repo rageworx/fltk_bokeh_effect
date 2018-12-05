@@ -34,12 +34,18 @@ ifeq (static,$(firstword $(MAKECMDGOALS)))
 	LSTATICFLAG = -static
 endif
 
+ifeq (noomp,$(firstword $(MAKECMDGOALS)))
+	CFLAGS := $(filter-out -fopenmp,$(CFLAGS))
+	CFLAGS += -DNOOPENMP
+endif
+
 LFLAGS  = -L$(FLI_PATH)
 LFLAGS += $(LSTATICFLAG)
 LFLAGS += -lfl_imgtk
 LFLAGS += $(FLTKCFG_LFG)
 
 static: all
+noomp: all
 
 all: prepare $(BIN_PATH)/$(TARGET)
 
